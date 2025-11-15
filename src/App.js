@@ -1,35 +1,38 @@
 import { useState, useEffect } from "react";
 
-const API_URL = "https://umb-web-taller.onrender.com"; // SE CAMBIARÁ EN MÓDULO 4
+const API_URL = "https://umb-web-taller.onrender.com";
 
 function App() {
   const [tareas, setTareas] = useState([]);
   const [nuevaTarea, setNuevaTarea] = useState("");
 
-  // Cargar tareas desde la API
+  // Obtener todas las tareas (GET a index.php)
   useEffect(() => {
-    fetch(API_URL + "/tareas.php")
+    fetch(API_URL)
       .then((res) => res.json())
       .then((data) => setTareas(data))
       .catch((err) => console.error("Error cargando tareas:", err));
   }, []);
 
-  // Agregar tarea usando POST a la API
+  // Agregar tarea (POST a index.php)
   const agregarTarea = (e) => {
     e.preventDefault();
 
     if (nuevaTarea.trim() === "") return;
 
-    const datos = { texto: nuevaTarea };
+    const datos = { titulo: nuevaTarea };
 
-    fetch(API_URL + "/agregar.php", {
+    fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(datos),
     })
       .then((res) => res.json())
-      .then((respuesta) => {
-        setTareas([...tareas, respuesta]);
+      .then(() => {
+        // Recargar tareas después de crear
+        fetch(API_URL)
+          .then((res) => res.json())
+          .then((data) => setTareas(data));
         setNuevaTarea("");
       })
       .catch((err) => console.error("Error creando tarea:", err));
@@ -39,7 +42,6 @@ function App() {
     <div style={{ padding: "20px" }}>
       <h1>Lista de Tareas</h1>
 
-      {/* FORMULARIO */}
       <form onSubmit={agregarTarea}>
         <input
           type="text"
@@ -50,10 +52,9 @@ function App() {
         <button>Agregar</button>
       </form>
 
-      {/* LISTA */}
       <ul>
         {tareas.map((t) => (
-          <li key={t.id}>{t.texto}</li>
+          <li key={t.id}>{t.titulo}</li>
         ))}
       </ul>
     </div>
