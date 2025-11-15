@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API_URL = "http://localhost/umb-api"; // SE CAMBIARÁ EN MÓDULO 4
+const API_URL = "https://juandpf26.github.io/umb-frontend-react2/"; // SE CAMBIARÁ EN MÓDULO 4
 
 function App() {
   const [tareas, setTareas] = useState([]);
